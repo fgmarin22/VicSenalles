@@ -2,8 +2,8 @@ import sys, os, shutil
 import zipfile
 import rarfile
 
-##rarfile.UNRAR_TOOL = "/usr/local/bin/unrar"
-rarfile.UNRAR_TOOL = "C:\\Program Files\\WinRAR\\unrar.exe"
+rarfile.UNRAR_TOOL = "/usr/local/bin/unrar"
+##rarfile.UNRAR_TOOL = "C:\\Program Files\\WinRAR\\unrar.exe"
 
 
 image_ext = [".jpeg", ".jpg", ".png"]
@@ -31,11 +31,17 @@ def desComp(file_name, ext):
         file_comp = rarfile.RarFile(file_name + ".rar", 'r')
     try:
         file_comp.extractall(file_name)
-    except rarfile.RarCRCError as error:
+    except rarfile.BadRarFile as error:
+        print("ERROR BadRarFile AL DESCOMPRIMIR FICHERO " + file_name+ext)
         print(error.args)
-    file_comp.close()
-    os.remove(file_name + ext)
-
+        file_comp.close()
+    except rarfile.RarCRCError as error:
+        print("ERROR RarCRCError AL DESCOMPRIMIR FICHERO " + file_name+ext)
+        print(error.args)
+        file_comp.close()
+    else:
+        file_comp.close()
+        os.remove(file_name + ext)
 
 def procFolder(folder, pathf, ext_jpg):
     print("Processing FOLDER: " + pathf)
